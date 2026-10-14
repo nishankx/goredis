@@ -8,12 +8,12 @@ import (
 func main() {
 
 
-	listener, err := net.Listen("tcp", ":6379")
+	listener, err := net.Listen("tcp", ":6380")
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 		return
 	}
-	fmt.Println("Server running on :6379")
+	fmt.Println("Server running on :6380")
 
 
 
