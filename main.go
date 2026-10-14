@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net"
-	"os"
 )
 
 func main() {
@@ -29,17 +27,14 @@ func main() {
 
 	
 	for {
-		buf := make([]byte, 1024)
-		_, err := conn.Read(buf)
+		resp := NewResp(conn)
+		value, err := resp.Read()
 		if err != nil {
-			if err == io.EOF {
-				fmt.Println("Client Disconnected")
-				break
-			}
 			fmt.Println("Error reading from connection:", err)
-			os.Exit(1)
+			return
 		}
 
+		fmt.Println(value)
 		response := "+OK\r\n"
 		conn.Write([]byte(response))
 	}
