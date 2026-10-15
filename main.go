@@ -16,7 +16,24 @@ func main() {
 	}
 	fmt.Println("Server running on :6380")
 
+	aof, err := NewAof("databse.aof")
+	if err != nil {
+		fmt.Println("Error starting AOF:", err)
+		return
+	}
+	
+	aof.Read(func(value Value) {
+		command := strings.ToUpper(value.array[0].bulk)
+		args := value.array[1:]
+		handler, ok := Handlers[command]
+		if !ok {
+			fmt.Println("Invalid command: ", command)
+			return
+		}
 
+		handler(args)
+	})
+	defer aof.Close()
 
 	conn, err := listener.Accept()
 	if err != nil {
@@ -47,15 +64,15 @@ func main() {
 
 		command := strings.ToUpper(value.array[0].bulk)
 		args := value.array[1:]
-
-		_ = value
 		writer := NewWriter(conn)
 		handler, ok := Handlers[command]
-		
 		if !ok {
 			fmt.Println("Invalid command: ", command)
-			writer.Write(Value{typ: "string", str: ""})
 			continue
+		}
+
+		if command == "SET" || command == "HSET"{
+			aof.Write(value)
 		}
 
 		result := handler(args)
