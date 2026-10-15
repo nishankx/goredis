@@ -16,7 +16,7 @@ func main() {
 	}
 	fmt.Println("Server running on :6380")
 
-	aof, err := NewAof("databse.aof")
+	aof, err := NewAof("database.aof")
 	if err != nil {
 		fmt.Println("Error starting AOF:", err)
 		return
